@@ -7,11 +7,18 @@ from datetime import date, datetime
 import qrcode
 import io
 import base64
-import cv2
 import pandas as pd
 import numpy as np
 import re
 from zoneinfo import ZoneInfo
+
+# Optional OpenCV support: use headless OpenCV in cloud environments.
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+except Exception:
+    cv2 = None
 
 load_dotenv()
 
@@ -695,6 +702,7 @@ def submit_request():
         db.session.commit()
         flash("Letter submitted to the warden successfully!", "success")
         return redirect(url_for('student_page',id=current_user.id))
+    
 @app.route('/qr_code/<int:letter_id>', methods=['GET'])
 def qr_code(letter_id):
     # 1. Get the letter data
