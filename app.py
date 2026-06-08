@@ -845,7 +845,7 @@ def upload_students():
                 for index, row in df.iterrows():
                     register_val = str(row.get('register', '')).strip() if row.get('register') else None
                     name_val = str(row.get('name', '')).strip() if row.get('name') else None
-                    dob_val = str(row.get('dob', '')).strip() if row.get('dob') else None
+                    dob_val = str(row.get('dob')).strip().split(' ')[0] if row.get('dob') else None
                     
                     if not register_val or not name_val or not dob_val:
                         continue
