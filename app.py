@@ -695,25 +695,17 @@ def submit_request():
         db.session.commit()
         flash("Letter submitted to the warden successfully!", "success")
         return redirect(url_for('student_page',id=current_user.id))
-
 @app.route('/qr_code/<int:letter_id>', methods=['GET'])
 def qr_code(letter_id):
     # 1. Get the letter data
     letter = Letter.query.get_or_404(letter_id)
-    qr_payload = {
-        "ID": letter.id,
-        "Student Name": letter.student_name,
-        "Department": letter.student_department,
-        "Year": letter.student_year
-        }
     
-    # Convert dict to a compact JSON string
-    qr_data = json.dumps(qr_payload)
+    # CRITICAL FIX: Encode just the raw string ID instead of complex JSON
+    qr_data = str(letter.id) 
 
     # 3. Generate QR Image with High Error Correction
-    # We use ERROR_CORRECT_M (Medium) to help laptop cameras focus better
     qr = qrcode.QRCode(
-        version=None, # Auto-detect version based on data size
+        version=None, 
         error_correction=qrcode.constants.ERROR_CORRECT_M,
         box_size=10,
         border=4,

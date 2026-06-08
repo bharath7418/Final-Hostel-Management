@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
     
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
     <style>
         :root {
             /* Architectural System Tokens */
@@ -133,7 +135,14 @@
         }
 
         /* Action Input Form Configurations */
-        .form-group { margin-bottom: 12px; }
+        .form-group { 
+            margin-bottom: 12px; 
+        }
+
+        .input-with-action {
+            display: flex;
+            gap: 8px;
+        }
 
         .form-input {
             width: 100%;
@@ -151,6 +160,50 @@
             border-color: var(--brand-primary);
             background-color: var(--bg-card);
             box-shadow: 0 0 0 3px var(--brand-primary-light);
+        }
+
+        .btn-action-toggle {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            padding: 0 14px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .btn-action-toggle:hover {
+            background-color: var(--brand-primary-light);
+            border-color: var(--brand-primary);
+        }
+        
+        .btn-action-toggle.active {
+            background-color: var(--brand-danger);
+            color: white;
+            border-color: var(--brand-danger);
+        }
+
+        /* QR Scanner Subsystem Container */
+        .scanner-viewport-wrapper {
+            display: none;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background-color: #000000;
+            position: relative;
+        }
+
+        #qr-reader {
+            width: 100% !important;
+            border: none !important;
+        }
+
+        #qr-reader __video {
+            object-fit: cover !important;
         }
 
         .btn-submit {
@@ -339,9 +392,18 @@
                     {% endif %}
                 {% endwith %}
 
-                <form action="/verify_id" method="post">
+                <form id="verificationForm" action="/verify_id" method="post">
+                    <div class="scanner-viewport-wrapper" id="scannerWrapper">
+                        <div id="qr-reader"></div>
+                    </div>
+
                     <div class="form-group">
-                        <input type="number" name="letter_id" class="form-input" placeholder="Scan or Type Pass ID..." autocomplete="off" required>
+                        <div class="input-with-action">
+                            <input type="number" name="letter_id" id="letter_id" class="form-input" placeholder="Scan or Type Pass ID..." autocomplete="off" required>
+                            <button type="button" class="btn-action-toggle" id="toggleScannerBtn" title="Scan QR Code with Camera">
+                                📷
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn-submit">Verify Identity</button>
                 </form>
@@ -382,7 +444,6 @@
 
             <div class="records-wrapper-box" id="denseLedgerContainer">
                 {% for record in records %}
-                    
                     <div class="dense-strip-row" 
                          data-dept="{{ record.dept }}" 
                          data-year="{{ record.year }}"
@@ -411,6 +472,94 @@
     </main>
 
     <script>
+        let html5QrcodeScanner = null;
+        const scannerWrapper = document.getElementById('scannerWrapper');
+        const toggleScannerBtn = document.getElementById('toggleScannerBtn');
+        const letterIdInput = document.getElementById('letter_id');
+        const verificationForm = document.getElementById('verificationForm');
+
+        // Toggle logic for opening and closing camera stream
+        toggleScannerBtn.addEventListener('click', () => {
+            if (scannerWrapper.style.display === 'none' || scannerWrapper.style.display === '') {
+                startScanner();
+            } else {
+                stopScanner();
+            }
+        });
+
+        function startScanner() {
+            scannerWrapper.style.display = 'block';
+            toggleScannerBtn.classList.add('active');
+            toggleScannerBtn.innerText = '✕'; // Change camera icon to an exit cross
+            toggleScannerBtn.title = "Stop Scanner";
+
+            // Initialize Scanner instance targeting the DOM element block
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            
+            const config = { 
+                fps: 15, 
+                qrbox: (width, height) => {
+                    // Responsive sizing targeting 70% width of container bounding size box
+                    const size = Math.min(width, height) * 0.7;
+                    return { width: size, height: size };
+                }
+            };
+
+            // Start stream using the environment-facing (back) camera
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, 
+                config, 
+                onScanSuccess, 
+                onScanFailure
+            ).catch(err => {
+                console.error("Camera access failed:", err);
+                alert("Could not access system camera hardware. Check system permissions.");
+                stopScanner();
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner = null;
+                    clearScannerUI();
+                }).catch(err => {
+                    console.error("Failed to cleanly kill camera track stream:", err);
+                    clearScannerUI();
+                });
+            } else {
+                clearScannerUI();
+            }
+        }
+
+        function clearScannerUI() {
+            scannerWrapper.style.display = 'none';
+            toggleScannerBtn.classList.remove('active');
+            toggleScannerBtn.innerText = '📷';
+            toggleScannerBtn.title = "Scan QR Code with Camera";
+        }
+
+        // Triggered instantly when a valid QR matrix code is scanned 
+        function onScanSuccess(decodedText, decodedResult) {
+            // Strip away potential letters/symbols if the data payload contains characters besides raw numbers
+            const parsedId = decodedText.replace(/\D/g, ''); 
+            
+            if (parsedId) {
+                letterIdInput.value = parsedId;
+                stopScanner();
+                
+                // Instantly dispatch form submit action payload matching requirements
+                verificationForm.submit();
+            } else {
+                alert("Scanned non-numeric payload: " + decodedText + ". A valid numeric Pass ID is required.");
+            }
+        }
+
+        function onScanFailure(error) {
+            // Silent drop loop framework to keep scan processing performance clean 
+            // html5qrcode checks frame arrays sequentially; failure alerts here are overly verbose
+        }
+
         function runLiveDenseFilter() {
             const targetDept = document.getElementById('deptFilter').value;
             const targetYear = document.getElementById('yearFilter').value;
