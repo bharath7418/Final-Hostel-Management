@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect | Next-Gen Gateway Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Clean High-Contrast Light Engineering Tokens */
+            --bg-canvas: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --border-glow: rgba(15, 23, 42, 0.06);
+            --border-hover: rgba(15, 23, 42, 0.12);
+            --text-heading: #0f172a;
+            --text-body: #475569;
+            --text-dim: #64748b;
+            
+            /* High-Fidelity Accent Engines */
+            --cyber-blue: #2563eb;
+            --cyber-blue-glow: rgba(37, 99, 235, 0.12);
+            --neon-emerald: #10b981;
+            --neon-purple: #7c3aed;
+            --neon-rose: #f43f5e;
+            --neon-amber: #ea580c;
+            --neon-cyan: #0891b2;
+
+            --transition-fluid: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
+        
+        body { 
+            background-color: var(--bg-canvas); 
+            color: var(--text-body); 
+            line-height: 1.6; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Geometric Engineering Background Elements */
+        .cyber-grid-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center top;
+            mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, #000 40%, transparent 100%);
+            z-index: -2;
+        }
+
+        .ambient-glow-orb {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+            top: -200px;
+            left: calc(50% - 300px);
+            z-index: -1;
+            filter: blur(50px);
+            pointer-events: none;
+            animation: orbPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes orbPulse {
+            0% { transform: scale(1) translateY(0); opacity: 0.8; }
+            100% { transform: scale(1.1) translateY(15px); opacity: 0.5; }
+        }
+
+        /* Translucent Frosted Glass Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 1.1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-glow);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+        }
+
+        .logo { 
+            font-size: 1.35rem; 
+            font-weight: 800; 
+            color: var(--text-heading); 
+            letter-spacing: -0.75px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo svg {
+            color: var(--cyber-blue);
+        }
+
+        .nav-links { 
+            display: flex; 
+            gap: 28px; 
+            align-items: center; 
+        }
+        
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-body); 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            transition: var(--transition-fluid);
+        }
+        
+        .nav-links a:hover { 
+            color: var(--cyber-blue);
+        }
+
+        .btn-admin { 
+            background: var(--text-heading);
+            color: #ffffff !important; 
+            padding: 10px 22px; 
+            border-radius: 10px; 
+            font-size: 0.85rem !important;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+        }
+        
+        .btn-admin:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-heading);
+            cursor: pointer;
+        }
+
+        /* High-Impact Light Hero Presentation Module */
+        .hero {
+            padding: 110px 5% 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 { 
+            font-size: 4rem; 
+            color: var(--text-heading); 
+            margin-bottom: 20px; 
+            font-weight: 800; 
+            letter-spacing: -1.75px;
+            line-height: 1.15;
+            background: linear-gradient(to bottom, #0f172a 60%, #475569 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p { 
+            max-width: 720px; 
+            margin: 0 auto; 
+            color: var(--text-body); 
+            font-size: 1.15rem; 
+            font-weight: 500;
+        }
+
+        /* Layout Architecture Grid Matrix */
+        .grid-container {
+            max-width: 1240px;
+            margin: -40px auto 100px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 28px;
+        }
+
+        /* Translucent White Identity Cards Modules */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px 32px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
+            transition: var(--transition-fluid);
+        }
+
+        /* Top Border Laser Accent Line */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            transition: var(--transition-fluid);
+        }
+
+        .icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            background: #ffffff;
+            border: 1px solid var(--border-glow);
+            color: var(--text-heading);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-fluid);
+        }
+
+        .card h3 { 
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-heading); 
+            margin-bottom: 12px; 
+        }
+        
+        .card p { 
+            font-size: 0.925rem; 
+            color: var(--text-dim); 
+            margin-bottom: 32px; 
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        /* High-Contrast Interactive Terminal Buttons */
+        .card-link {
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid var(--border-glow);
+            color: var(--text-heading);
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-fluid);
+        }
+
+        /* Interactive Card State Upgrades */
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+        }
+
+        /* Student Element Accent Rules */
+        .card-student:hover { border-color: rgba(37, 99, 235, 0.25); }
+        .card-student::before { background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent); }
+        .card-student:hover .icon-box { background: var(--cyber-blue-glow); color: var(--cyber-blue); border-color: rgba(37, 99, 235, 0.3); }
+        .card-student .card-link:hover { background: var(--cyber-blue); border-color: var(--cyber-blue); color: #ffffff; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); }
+
+        /* Warden Element Accent Rules */
+        .card-warden:hover { border-color: rgba(124, 58, 237, 0.25); }
+        .card-warden::before { background: linear-gradient(90deg, transparent, var(--neon-purple), transparent); }
+        .card-warden:hover .icon-box { background: rgba(124, 58, 237, 0.08); color: var(--neon-purple); border-color: rgba(124, 58, 237, 0.3); }
+        .card-warden .card-link:hover { background: var(--neon-purple); border-color: var(--neon-purple); color: #ffffff; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3); }
+
+        /* Staff Element Accent Rules */
+        .card-staff:hover { border-color: rgba(244, 63, 94, 0.25); }
+        .card-staff::before { background: linear-gradient(90deg, transparent, var(--neon-rose), transparent); }
+        .card-staff:hover .icon-box { background: rgba(244, 63, 94, 0.08); color: var(--neon-rose); border-color: rgba(244, 63, 94, 0.3); }
+        .card-staff .card-link:hover { background: var(--neon-rose); border-color: var(--neon-rose); color: #ffffff; box-shadow: 0 4px 14px rgba(244, 63, 94, 0.3); }
+
+        /* HOD Element Accent Rules */
+        .card-hod:hover { border-color: rgba(8, 145, 178, 0.25); }
+        .card-hod::before { background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent); }
+        .card-hod:hover .icon-box { background: rgba(8, 145, 178, 0.08); color: var(--neon-cyan); border-color: rgba(8, 145, 178, 0.3); }
+        .card-hod .card-link:hover { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #ffffff; box-shadow: 0 4px 14px rgba(8, 145, 178, 0.3); }
+
+        /* Security Element Accent Rules */
+        .card-security:hover { border-color: rgba(16, 185, 129, 0.25); }
+        .card-security::before { background: linear-gradient(90deg, transparent, var(--neon-emerald), transparent); }
+        .card-security:hover .icon-box { background: rgba(16, 185, 129, 0.08); color: var(--neon-emerald); border-color: rgba(16, 185, 129, 0.3); }
+        .card-security .card-link:hover { background: var(--neon-emerald); border-color: var(--neon-emerald); color: #ffffff; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
+
+        /* Admin Element Accent Rules */
+        .card-admin:hover { border-color: rgba(234, 88, 12c, 0.25); }
+        .card-admin::before { background: linear-gradient(90deg, transparent, var(--neon-amber), transparent); }
+        .card-admin:hover .icon-box { background: rgba(234, 88, 12, 0.08); color: var(--neon-amber); border-color: rgba(234, 88, 12, 0.3); }
+        .card-admin .card-link:hover { background: var(--neon-amber); border-color: var(--neon-amber); color: #ffffff; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3); }
+
+        /* Clean Technical Base Footer */
+        footer { 
+            text-align: center; 
+            padding: 60px 24px; 
+            color: var(--text-dim); 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            border-top: 1px solid var(--border-glow); 
+            background: #ffffff;
+        }
+
+        /* Adaptive Structural Layout Invocations */
+        @media (max-width: 991px) {
+            .hero h1 { font-size: 3rem; }
+            .grid-container { margin-top: -20px; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 1.1rem 24px; }
+            .nav-links { 
+                display: none; 
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #ffffff;
+                padding: 32px 24px;
+                border-bottom: 1px solid var(--border-glow);
+                gap: 20px;
+                box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+            }
+            .nav-links.active { display: flex; }
+            .btn-admin { width: 100%; text-align: center; }
+            .menu-toggle { display: block; }
+            .hero { padding: 80px 24px 90px; }
+            .hero h1 { font-size: 2.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-grid-canvas"></div>
+    <div class="ambient-glow-orb"></div>
+
+    <nav>
+        <div class="logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            CampusConnect
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="/student_login">Students</a>
+            <a href="/warden_login">Wardens</a>
+            <a href="/staff_login">Staff</a>
+            <a href="/hod_login">HODs</a>
+            <a href="/security_login">Security</a>
+            <a href="/add_warden" class="btn-admin">Admin Registration</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Smart Gateway Management</h1>
+        <p>A high-performance infrastructure engineered for students, administrative faculties, and security teams to automate gate checkouts, manage workflows, and track perimeter access logs in real-time.</p>
+    </header>
+
+    <main class="grid-container">
+        
+        <div class="card card-student">
+            <div class="icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+            </div>
+            <h3>Student Portal</h3>
+            <p>Generate secure out-pass tokens, verify digital signature tracking logs, and audit personal checkout timelines.</p>
+            <a href="/student_login" class="card-link">Launch Terminal</a>
+        </div>
+
+        <div class="card card-warden">
+            <div class="icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>Warden Dashboard</h3>
+            <p>Review hostel clearance permissions, authorize leave parameters, and monitor live automated curfew checks.</p>
+            <a href="/warden_login" class="card-link">Launch Terminal</a>
+        </div>
+
+        <div class="card card-staff">
+            <div class="icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            </div>
+            <h3>Staff Dashboard</h3>
+            <p>Acknowledge academic-related outpass applications, verify criteria profiles, and validate travel waivers.</p>
+            <a href="/staff_login" class="card-link">Launch Terminal</a>
+        </div>
+
+        <div class="card card-hod">
+            <div class="icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 21v-2a4 4 0 0 0-3-3.87a9 9 0 0 0-14 0A4 4 0 0 0 2 19v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h3>HOD Dashboard</h3>
+            <p>Oversee overall departmental checkout analytics, execute escalation overrides, and process deep structural metrics.</p>
+            <a href="/hod_login" class="card-link">Launch Terminal</a>
+        </div>
+
+        <div class="card card-security">
+            <div class="icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <h3>Access Scanner</h3>
+            <p>Process cryptographically secured QR clearances instantly at physical checkpoint gate terminals.</p>
+            <a href="/security_login" class="card-link">Launch Terminal</a>
+        </div>
+
+        <div class="card card-admin">
+            <div class="icon-box">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33ba1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 .33 1.82z"/></svg>
+            </div>
+            <h3>Admin System</h3>
+            <p>Perform complete structural configuration management, adjust backend file ingestion nodes, and run audits.</p>
+            <a href="/admin_login" class="card-link">Launch Terminal</a>
+        </div>
+
+    </main>
+
+    <footer>
+        &copy; 2026 CampusConnect Infrastructure Control. Engineered with Cryptographic Gateway Security.
+    </footer>
+
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

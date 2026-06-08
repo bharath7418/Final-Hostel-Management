@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejected History | Warden Portal</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --danger: #ef4444; /* Red for Rejected */
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 20px; }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Header Area */
+        .dashboard-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { text-decoration: none; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+        .logout-btn { color: var(--danger) !important; padding: 8px 16px; border-radius: 8px; border: 1px solid #fee2e2; }
+
+        /* 🔍 Red-Themed Filter Panel */
+        .filter-panel {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-group label { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .filter-group input, .filter-group select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        /* 📊 Table Layout */
+        .table-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #fff1f2; } /* Subtle red header */
+        th { padding: 15px; text-align: left; font-size: 0.75rem; color: #991b1b; text-transform: uppercase; border-bottom: 1px solid #fecaca; }
+        td { padding: 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+
+        .rejected-indicator { width: 4px; background: var(--danger); }
+        
+        /* Action Buttons */
+        .btn-approve {
+            background: var(--success);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            transition: 0.2s;
+        }
+        .btn-approve:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3); }
+
+        /* Mobile View (iPhone/Android) */
+        @media (max-width: 850px) {
+            thead { display: none; }
+            tr { display: block; border-bottom: 8px solid var(--bg); padding: 15px; position: relative;}
+            td { display: block; width: 100%; border: none; padding: 5px 0; }
+            td::before { content: attr(data-label); font-weight: 800; font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; }
+            .btn-approve { width: 100%; text-align: center; margin-top: 10px; padding: 12px; }
+        }
+
+        .hidden-row { display: none !important; }
+        .empty-state { padding: 60px; text-align: center; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="dashboard-header">
+        <div class="profile-info">
+            <h1>Rejected History</h1>
+            <small>{{ warden.name }} | Warden Access</small>
+        </div>
+        <nav class="nav-links">
+            <a href="/warden_page/{{ warden.id }}">Dashboard</a>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Filters -->
+    <div class="filter-panel">
+        <div class="filter-group">
+            <label>Search Student</label>
+            <input type="text" id="nameFilter" placeholder="Name or ID..." onkeyup="applyFilters()">
+        </div>
+        <div class="filter-group">
+            <label>Department</label>
+            <select id="deptFilter" onchange="applyFilters()">
+                <option value="all">All Departments</option>
+                <option value="AI & DS">AI & DS</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Date Rejected</label>
+            <input type="date" id="dateFilter" onchange="applyFilters()">
+        </div>
+        <button onclick="resetFilters()" style="padding: 10px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: white;">Reset</button>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5px;"></th>
+                    <th>Student Details</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                    <th style="text-align: center;">Reconsider</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set rejected_count = [] %}
+                {% for l in letters %}
+                {% if l.warden_name == warden.name and l.status == 'Rejected' %}
+                {% if rejected_count.append(1) %}{% endif %}
+                <tr class="log-row" 
+                    data-name="{{ l.student_name|lower }}" 
+                    data-dept="{{ l.student_department }}" 
+                    data-date="{{ l.created_at.strftime('%Y-%m-%d') }}">
+                    
+                    <td class="rejected-indicator"></td>
+                    <td data-label="Student">
+                        <strong>{{ l.student_name }}</strong><br>
+                        <small style="color: var(--text-muted);">{{ l.student_department }}</small>
+                    </td>
+                    <td data-label="Reason" style="font-style: italic; color: var(--text-muted);">
+                        "{{ l.letter_content }}"
+                    </td>
+                    <td data-label="Date">
+                        {{ l.created_at.strftime('%d %b, %Y') }}
+                    </td>
+                    <td data-label="Action" style="text-align: center;">
+                        <a href="{{ url_for('approval_letter', id=l.id) }}" 
+                           class="btn-approve" 
+                           onclick="return confirm('Approve this previously rejected request?');">
+                           Approve
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% if not rejected_count %}
+        <div class="empty-state">
+            <p>No rejected letters found in the logs.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function applyFilters() {
+        const nameVal = document.getElementById('nameFilter').value.toLowerCase();
+        const deptVal = document.getElementById('deptFilter').value;
+        const dateVal = document.getElementById('dateFilter').value;
+        const rows = document.querySelectorAll('.log-row');
+
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const dept = row.getAttribute('data-dept');
+            const date = row.getAttribute('data-date');
+
+            const nameMatch = name.includes(nameVal);
+            const deptMatch = (deptVal === 'all' || dept === deptVal);
+            const dateMatch = (dateVal === '' || date === dateVal);
+
+            if (nameMatch && deptMatch && dateMatch) {
+                row.classList.remove('hidden-row');
+            } else {
+                row.classList.add('hidden-row');
+            }
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById('nameFilter').value = '';
+        document.getElementById('deptFilter').value = 'all';
+        document.getElementById('dateFilter').value = '';
+        applyFilters();
+    }
+</script>
+
+</body>
+</html>

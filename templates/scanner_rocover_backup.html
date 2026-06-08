@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Gate Pass Tracking</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 100px 20px 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ==========================================================================
+           1. Navigation Bar
+           ========================================================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 max(20px, calc((100% - 1000px) / 2));
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links .logout-link {
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-links .logout-link:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* ==========================================================================
+           2. Layout Containers & Profile Header
+           ========================================================================== */
+        .container,
+        .tracking-container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .profile-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .profile-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        /* ==========================================================================
+           3. Tracking Timeline Component
+           ========================================================================== */
+        .tracking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .order-id {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .order-id span {
+            color: var(--primary-color);
+        }
+
+        .expected-delivery {
+            text-align: right;
+        }
+
+        .expected-delivery p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .expected-delivery font {
+            font-weight: 600;
+        }
+
+        .tracking-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 35px;
+        }
+
+        .tracking-timeline::before {
+            content: '';
+            position: absolute;
+            top: 22px;
+            left: 6%;
+            right: 6%;
+            height: 4px;
+            background-color: var(--border-color);
+            z-index: 1;
+        }
+
+        .timeline-progress-line {
+            position: absolute;
+            top: 22px;
+            left: 6%;
+            height: 4px;
+            z-index: 1;
+            transition: width 0.4s ease;
+        }
+
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 3px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .step-label {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .step-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* State System Management rules */
+        .timeline-step.completed .step-icon {
+            border-color: var(--success-color);
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .timeline-step.completed .step-label {
+            color: var(--success-color);
+        }
+
+        .timeline-step.rejected .step-icon {
+            border-color: var(--danger-color);
+            background-color: var(--danger-color);
+            color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+
+        .timeline-step.rejected .step-label {
+            color: var(--danger-color);
+            font-weight: 700;
+        }
+
+        .timeline-step.disabled .step-icon {
+            border-color: var(--border-color);
+            background-color: #f9fafb;
+            color: #d1d5db;
+        }
+
+        .timeline-step.disabled .step-label {
+            color: #9ca3af;
+        }
+
+        /* Dynamic Progress Line Level Percentage Controller Widths */
+        .timeline-progress-line.progress-0 {
+            width: 0%;
+        }
+
+        .timeline-progress-line.progress-25 {
+            width: 0%;
+        }
+
+        .timeline-progress-line.progress-50 {
+            width: 33.33%;
+            background-color: var(--success-color);
+        }
+
+        .timeline-progress-line.progress-75 {
+            width: 66.66%;
+            background-color: var(--success-color);
+        }
+
+        .timeline-progress-line.progress-100 {
+            width: 88%;
+            background-color: var(--success-color);
+        }
+
+        /* ==========================================================================
+           4. Metadata Summary Block
+           ========================================================================== */
+        .shipping-summary {
+            background-color: var(--bg-body);
+            border-radius: 8px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-block h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .summary-block p {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        /* ==========================================================================
+           5. Active Digital Passes Grid Layout
+           ========================================================================== */
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .letter-item {
+            background: var(--bg-body);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-left: 5px solid var(--border-color);
+        }
+
+        .letter-item.status-approval {
+            border-left-color: var(--success-color);
+            background: #f0fdf4;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            background: var(--success-color);
+            color: white;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .card-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .qr-link {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .qr-link:hover {
+            color: var(--primary-hover);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            background: var(--bg-body);
+            border-radius: 8px;
+            border: 2px dashed var(--border-color);
+        }
+
+        .contact-action-container {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-call-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #f0fdf4;
+            /* Light green background */
+            border: 1px solid #bbf7d0;
+            /* Soft green border */
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: var(--success-color);
+            /* Uses your existing emerald green variable */
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Hover and active pressing states */
+        .phone-call-btn:hover {
+            background-color: var(--success-color);
+            color: #ffffff;
+            border-color: var(--success-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        }
+
+        .phone-call-btn:active {
+            transform: translateY(1px);
+        }
+
+        .phone-icon {
+            font-size: 1.2rem;
+        }
+
+        .phone-number-text {
+            letter-spacing: 0.5px;
+        }
+
+
+        /* ==========================================================================
+           6. Mobile Adaptations & Breakpoints
+           ========================================================================== */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 90px;
+            }
+
+            .tracking-timeline {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-left: 15px;
+                gap: 25px;
+            }
+
+            .tracking-timeline::before {
+                top: 0;
+                bottom: 0;
+                left: 38px;
+                width: 4px;
+                height: 78%;
+            }
+
+            .timeline-progress-line {
+                width: 4px !important;
+                left: 38px;
+            }
+
+            .timeline-progress-line.progress-0 {
+                height: 0%;
+            }
+
+            .timeline-progress-line.progress-25 {
+                height: 0%;
+            }
+
+            .timeline-progress-line.progress-50 {
+                height: 33.33%;
+            }
+
+            .timeline-progress-line.progress-75 {
+                height: 66.66%;
+            }
+
+            .timeline-progress-line.progress-100 {
+                height: 88%;
+            }
+
+            .timeline-step {
+                flex-direction: row;
+                text-align: left;
+                gap: 20px;
+                width: 100%;
+            }
+
+            .step-icon {
+                width: 42px;
+                height: 42px;
+                min-width: 42px;
+            }
+
+            .step-label {
+                margin-top: 0;
+            }
+
+            .tracking-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .expected-delivery {
+                text-align: left;
+            }
+
+            .navbar {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="nav-logo">STUDENT PORTAL</a>
+        <div class="nav-links">
+            <a href="{{ url_for('student_profile', student_id=student.id) }}">Profile</a>
+            <a href="{{ url_for('request_letter', student_id=student.id) }}">New Request</a>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <div class="profile-header">
+            <h1>Welcome, {{ student.name }}</h1>
+            <p>Roll No: {{ student.username }} &nbsp;|&nbsp; Student ID: {{ student.id }}</p>
+        </div>
+        {% if letters.status != 'Completed' %}
+            {% for letter in letters %}
+
+            <!-- Staff Validation -->
+            {% if letter.category == 'staff' %}
+            {% set current_status = letter.status.lower() %}
+            <div class="tracking-container">
+
+                <div class="tracking-header">
+                    <div class="order-id">
+                        Letter ID: <span>{{ letter.id }}</span>
+                    </div>
+                    <div class="expected-delivery">
+                        <p>Submitted date</p>
+                        <font>{{ letter.request_date }}</font>
+                    </div>
+                </div>
+
+                <div class="tracking-timeline">
+                    <div class="timeline-progress-line progress-
+                    {%- if current_status == 'approved' %}100
+                    {%- elif current_status == 'pending warden' %}75
+                    {%- elif current_status == 'pending hod' %}50
+                    {%- elif current_status == 'pending staff' %}25
+                    {%- else %}0{% endif %}">
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status in ['pending hod', 'pending warden', 'approved'] %} completed
+                    {%- elif current_status == 'pending staff' %} rejected
+                    {%- else %} disabled {% endif %}">
+
+                        <div class="step-icon">
+                            {% if current_status in ['pending hod', 'pending warden', 'approved'] %} ✓
+                            {% elif current_status == 'pending staff' %} ✕
+                            {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Staff Verification</div>
+                            <div class="step-time">
+                                {% if current_status in ['pending hod', 'pending warden', 'approved'] %} Verified
+                                {% elif current_status == 'pending staff' %} Pending Action
+                                {% else %} Waiting {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status in ['pending warden', 'approved'] %} completed
+                    {%- elif current_status == 'pending hod' %} rejected
+                    {%- else %} disabled {% endif %}">
+
+                        <div class="step-icon">
+                            {% if current_status in ['pending warden', 'approved'] %} ✓
+                            {% elif current_status == 'pending hod' %} ✕
+                            {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">HOD Verification</div>
+                            <div class="step-time">
+                                {% if current_status in ['pending warden', 'approved'] %} Verified
+                                {% elif current_status == 'pending hod' %} Pending Action
+                                {% else %} Waiting {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status == 'approved' %} completed
+                    {%- elif current_status == 'pending warden' %} rejected
+                    {%- else %} disabled {% endif %}">
+
+                        <div class="step-icon">
+                            {% if current_status == 'approved' %} ✓
+                            {% elif current_status == 'pending warden' %} ✕
+                            {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Warden Verification</div>
+                            <div class="step-time">
+                                {% if current_status == 'approved' %} Verified
+                                {% elif current_status == 'pending warden' %} Pending Action
+                                {% else %} Waiting {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status == 'approved' %} completed
+                    {%- else %} disabled {% endif %}">
+                        <div class="step-icon">
+                            {% if current_status == 'approved' %} <a href="{{ url_for('qr_code', letter_id=letter.id) }}"
+                                class="qr-link">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    style="color: rgb(255, 255, 255); BACKGROUND-COLOR: rgb(0, 0, 0)" width="25" height="25"
+                                    fill="currentColor" class="bi bi-qr-code" viewBox="0 0 16 16">
+                                    <path d="M2 2h2v2H2z" />
+                                    <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z" />
+                                    <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z" />
+                                    <path
+                                        d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z" />
+                                    <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z" />
+                                </svg></a> {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Complete</div>
+                            <div class="step-time">
+                                {% if current_status == 'approved' %} Active Pass {% else %} Pending {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shipping-summary">
+                    <div class="summary-block">
+                        <h4 style="font-size: medium; font-weight: bold;">Authority</h4>
+                        <h3 style="font-size: medium; font-weight: bold;">{{ letter.nameSelection }}</h3>
+                    </div>
+                    <div class="summary-block">
+                        <h4>Request : {{ letter.request_category.replace('_', ' ').title() }}</h4>
+                        <p style="font-size: 12px; font-weight: normal; color: var(--text-muted);">{{ letter.letter_content
+                            }}
+                        </p>
+                    </div>
+                    <div class="summary-block">
+                        <p><strong>Parent Available Time:</strong> <br> {{ letter.parent_start_time.strftime('%d %b, %I:%M
+                            %p')
+                            }} - {{ letter.parent_end_time.strftime('%d %b, %I:%M %p') }}</p>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
+
+            <!-- HOD Validation -->
+            {% if letter.category == 'HOD' %}
+            {% set current_status = letter.status.lower() %}
+            <div class="tracking-container">
+
+                <div class="tracking-header">
+                    <div class="order-id">
+                        Letter ID: <span>{{ letter.id }}</span>
+                    </div>
+                    <div class="expected-delivery">
+                        <p>Submitted date</p>
+                        <font>{{ letter.request_date }}</font>
+                    </div>
+                </div>
+
+                <div class="tracking-timeline">
+                    <div class="timeline-progress-line progress-
+                    {%- if current_status == 'approved' %}100
+                    {%- elif current_status == 'pending warden' %}75
+                    {%- elif current_status == 'pending hod' %}50
+                    {%- elif current_status == 'pending staff' %}25
+                    {%- else %}0{% endif %}">
+                    </div>
+
+
+                    <div class="timeline-step 
+                    {%- if current_status in ['pending warden', 'approved'] %} completed
+                    {%- elif current_status == 'pending hod' %} rejected
+                    {%- else %} disabled {% endif %}">
+
+                        <div class="step-icon">
+                            {% if current_status in ['pending warden', 'approved'] %} ✓
+                            {% elif current_status == 'pending hod' %} ✕
+                            {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">HOD Verification</div>
+                            <div class="step-time">
+                                {% if current_status in ['pending warden', 'approved'] %} Verified
+                                {% elif current_status == 'pending hod' %} Pending Action
+                                {% else %} Waiting {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status == 'approved' %} completed
+                    {%- elif current_status == 'pending warden' %} rejected
+                    {%- else %} disabled {% endif %}">
+
+                        <div class="step-icon">
+                            {% if current_status == 'approved' %} ✓
+                            {% elif current_status == 'pending warden' %} ✕
+                            {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Warden Verification</div>
+                            <div class="step-time">
+                                {% if current_status == 'approved' %} Verified
+                                {% elif current_status == 'pending warden' %} Pending Action
+                                {% else %} Waiting {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status == 'approved' %} completed
+                    {%- else %} disabled {% endif %}">
+                        <div class="step-icon">
+                            {% if current_status == 'approved' %} <a href="{{ url_for('qr_code', letter_id=letter.id) }}"
+                                class="qr-link">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    style="color: rgb(255, 255, 255); BACKGROUND-COLOR: rgb(0, 0, 0)" width="25" height="25"
+                                    fill="currentColor" class="bi bi-qr-code" viewBox="0 0 16 16">
+                                    <path d="M2 2h2v2H2z" />
+                                    <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z" />
+                                    <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z" />
+                                    <path
+                                        d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z" />
+                                    <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z" />
+                                </svg></a> {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Complete</div>
+                            <div class="step-time">
+                                {% if current_status == 'approved' %} Active Pass {% else %} Pending {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shipping-summary">
+                    <div class="summary-block">
+                        <h4 style="font-size: medium; font-weight: bold;">Authority</h4>
+                        <h3 style="font-size: medium; font-weight: bold;">{{ letter.nameSelection }}</h3>
+                    </div>
+                    <div class="summary-block">
+                        <h4>Request : {{ letter.request_category.replace('_', ' ').title() }}</h4>
+                        <p style="font-size: 12px; font-weight: normal; color: var(--text-muted);">{{ letter.letter_content
+                            }}
+                        </p>
+                    </div>
+                    <div class="summary-block">
+                        <p><strong>Parent Available Time:</strong> <br> {{ letter.parent_start_time.strftime('%d %b, %I:%M
+                            %p')
+                            }} - {{ letter.parent_end_time.strftime('%d %b, %I:%M %p') }}</p>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
+
+            <!-- Warden Validation -->
+            {% if letter.category == 'warden' %}
+            {% set current_status = letter.status.lower() %}
+            <div class="tracking-container">
+
+                <div class="tracking-header">
+                    <div class="order-id">
+                        Letter ID: <span>{{ letter.id }}</span>
+                    </div>
+                    <div class="expected-delivery">
+                        <p>Submitted date</p>
+                        <font>{{ letter.request_date }}</font>
+                    </div>
+                </div>
+
+                <div class="tracking-timeline">
+                    <div class="timeline-step 
+                    {%- if current_status == 'approved' %} completed
+                    {%- elif current_status == 'pending warden' %} rejected
+                    {%- else %} disabled {% endif %}">
+
+                        <div class="step-icon">
+                            {% if current_status == 'approved' %} ✓
+                            {% elif current_status == 'pending warden' %} ✕
+                            {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Warden Verification</div>
+                            <div class="step-time">
+                                {% if current_status == 'approved' %} Verified
+                                {% elif current_status == 'pending warden' %} Pending Action
+                                {% else %} Waiting {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step 
+                    {%- if current_status == 'approved' %} completed
+                    {%- else %} disabled {% endif %}">
+                        <div class="step-icon">
+                            {% if current_status == 'approved' %} <a href="{{ url_for('qr_code', letter_id=letter.id) }}"
+                                class="qr-link">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    style="color: rgb(255, 255, 255); BACKGROUND-COLOR: rgb(0, 0, 0)" width="25" height="25"
+                                    fill="currentColor" class="bi bi-qr-code" viewBox="0 0 16 16">
+                                    <path d="M2 2h2v2H2z" />
+                                    <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z" />
+                                    <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z" />
+                                    <path
+                                        d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z" />
+                                    <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z" />
+                                </svg></a> {% else %} 🔒 {% endif %}
+                        </div>
+                        <div>
+                            <div class="step-label">Complete</div>
+                            <div class="step-time">
+                                {% if current_status == 'approved' %} Active Pass {% else %} Pending {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shipping-summary">
+                    <div class="summary-block">
+                        <h4 style="font-size: medium; font-weight: bold;">Authority</h4>
+                        <h3 style="font-size: medium; font-weight: bold;">{{ letter.nameSelection }}</h3>
+                    </div>
+                    <div class="summary-block">
+                        <h4>Request : {{ letter.request_category.replace('_', ' ').title() }}</h4>
+                        <p style="font-size: 12px; font-weight: normal; color: var(--text-muted);">{{ letter.letter_content
+                            }}
+                        </p>
+                    </div>
+                    <div class="summary-block">
+                        <p><strong>Parent Available Time:</strong> <br> {{ letter.parent_start_time.strftime('%d %b, %I:%M
+                            %p') }} - {{ letter.parent_end_time.strftime('%d %b, %I:%M %p') }}</p>
+                    </div>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            {% endfor %}
+        {% endif %}
+
+</body>
+
+</html>

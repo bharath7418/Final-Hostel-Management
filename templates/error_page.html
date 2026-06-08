@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | Error</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+     <style>
+        :root {
+    --danger-red: #e74c3c;
+    --dark-blue: #2c3e50;
+    --gray: #95a5a6;
+    --white: #ffffff;
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.error-content {
+    background: var(--white);
+    padding: 50px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 500px;
+}
+
+.error-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    color: var(--danger-red);
+}
+
+h1 {
+    color: var(--dark-blue);
+    margin: 0 0 10px;
+    font-size: 2rem;
+}
+
+.error-message {
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.action-area {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: var(--dark-blue);
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.btn-secondary {
+    background: none;
+    border: 2px solid var(--dark-blue);
+    color: var(--dark-blue);
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+     </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h1>Something Went Wrong</h1>
+            <p class="error-message">
+                {{ message if message else "You don't have permission to access this page or the resource does not exist." }}
+            </p>
+            <div class="action-area">
+                <a href="/" class="btn-primary">Back to Homepage</a>
+                <button onclick="history.back()" class="btn-secondary">Go Back</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

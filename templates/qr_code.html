@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification QR Code</title>
+    <style>
+        .qr-container {
+            text-align: center;
+            margin-top: 50px;
+            font-family: sans-serif;
+        }
+        .qr-image {
+            border: 10px solid #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .print-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; font-family: sans-serif; border: 2px solid #333; padding: 20px; width: 300px; margin: auto;">
+    <h2 style="margin-top: 0;">OFFICIAL PASS</h2>
+    <hr>
+    <img src="data:image/png;base64,{{ qr_code }}" style="width: 200px; height: 200px;">
+    <p><strong>Student:</strong> {{ letter.student_name }}</p>
+    <p style="font-size: 0.8rem; color: #666;">ID: #{{ letter.id }}</p>
+    <button onclick="window.print()">Download/Print</button>
+</div>
+</body>
+</html>

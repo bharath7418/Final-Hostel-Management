@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Import System | Executive Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Administrative Design System Variables */
+            --bg-canvas: #f8fafc;
+            --bg-surface: #ffffff;
+            --sidebar-slate: #0f172a;
+            
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-glow: rgba(37, 99, 235, 0.12);
+            
+            --color-success: #16a34a;
+            --color-success-bg: #d1e7dd;
+            --color-success-border: #badbcc;
+            
+            --color-alert-bg: #fff3cd;
+            --color-alert-text: #664d03;
+            --color-alert-border: #ffecb5;
+            
+            --border-light: #e2e8f0;
+            --border-dense: #cbd5e1;
+            
+            --radius-xl: 14px;
+            --radius-lg: 10px;
+            --radius-md: 8px;
+            
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 8px 20px -4px rgba(15, 23, 42, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
+            
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Base Resets & Layer Architectures */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: var(--bg-canvas);
+            color: var(--text-body);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Keyframe Animation Matrix (20+ Interactive Systems) */
+        @keyframes fadeInLayout { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleCardUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes borderPulse { 0%, 100% { border-color: var(--border-light); } 50% { border-color: var(--color-primary); } }
+        @keyframes toastSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* 20% Sidebar Panel Blueprint */
+        .sidebar {
+            width: 22%;
+            min-width: 240px;
+            max-width: 320px;
+            background: var(--sidebar-slate);
+            color: #ffffff;
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 4px 0 24px rgba(15, 23, 42, 0.15);
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .home-btn {
+            background: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: var(--transition-smooth);
+        }
+
+        .home-btn:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .secondary-nav-list {
+            list-style: none;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .secondary-nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition-smooth);
+        }
+
+        .secondary-nav-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(4px);
+        }
+
+        .sidebar-footer {
+            font-size: 0.75rem;
+            color: #475569;
+            margin-top: auto;
+            border-top: 1px solid #1e293b;
+            padding-top: 16px;
+            font-weight: 500;
+        }
+
+        /* 80% Workstation Panel Content Wrapper */
+        .main-content {
+            width: 78%;
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            animation: fadeInLayout 0.4s ease-out;
+        }
+
+        .main-content h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            letter-spacing: -0.02em;
+        }
+
+        .main-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Unified Quick Registration Sub-Toolbar Container */
+        .quick-actions-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 14px 20px;
+            margin-top: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .quick-actions-bar .bar-label {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .link-group-pool {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .inline-action-link {
+            color: var(--color-primary);
+            font-size: 0.85rem;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: var(--transition-smooth);
+        }
+
+        .inline-action-link:hover {
+            background: var(--color-primary-glow);
+            color: var(--color-primary-hover);
+        }
+
+        /* Flash Error/Success Alert Cards Components */
+        .alert {
+            padding: 14px 18px;
+            border-radius: var(--radius-lg);
+            margin-top: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: var(--color-alert-bg);
+            color: var(--color-alert-text);
+            border: 1px solid var(--color-alert-border);
+            box-shadow: var(--shadow-sm);
+            animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: var(--color-success-bg);
+            color: var(--color-success);
+            border-color: var(--color-success-border);
+        }
+
+        /* Responsive Grid Form Framework */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+            margin-top: 28px;
+        }
+
+        /* High Fidelity Card Matrix Elements */
+        .card {
+            background: var(--bg-surface);
+            padding: 24px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+            animation: scaleCardUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* Incremental layout entry animations per card item */
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.10s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.20s; }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-dense);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 span {
+            font-size: 1.25rem;
+            background: var(--bg-canvas);
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.825rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .card p code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-canvas);
+            color: var(--color-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.775rem;
+            font-weight: 600;
+            border: 1px solid var(--border-light);
+        }
+
+        /* Specialized Custom File Drag Wrappers */
+        .input-file-field {
+            display: block;
+            width: 100%;
+            border: 2px dashed var(--border-dense);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+            background: var(--bg-canvas);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-body);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .input-file-field:hover, .input-file-field:focus {
+            background: var(--color-primary-glow);
+            border-color: var(--color-primary);
+            outline: none;
+        }
+
+        /* Unified Form Trigger Actions Buttons */
+        .btn-submit-action {
+            width: 100%;
+            background: var(--sidebar-slate);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.875rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .btn-submit-action:hover {
+            background: var(--color-primary);
+            box-shadow: 0 4px 12px var(--color-primary-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit-action:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div>
+            <h2>Imports Panel</h2>
+            <a href="/" class="home-btn">🏠 Home Dashboard</a>
+        </div>
+        
+        <div>
+            <h2 style="margin-top: 15px;">Quick Navigation</h2>
+            <ul class="secondary-nav-list">
+                <li>
+                    <a href="/students" class="secondary-nav-link">
+                        <span>📋</span> System Active Records
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">Institutional Admin v1.1</div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Bulk Import Utilities Center</h1>
+        <p class="main-subtitle">Select your relevant administrative category below to upload tabular structure sheets.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div style="margin-top: 4px;">
+                {% for category, message in messages %}
+                  <div class="alert {% if category == 'success' %}alert-success{% endif %}">
+                      <span>{% if category == 'success' %}✨{% else %}⚠️{% endif %}</span>
+                      {{ message }}
+                  </div>
+                {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <section class="quick-actions-bar">
+            <span class="bar-label">Individual Tool Access:</span>
+            <div class="link-group-pool">
+                <a href="/add_student" class="inline-action-link">👤 Register Single Student</a>
+                <a href="/add_warden" class="inline-action-link">🔑 Register Single Warden</a>
+            </div>
+        </section>
+
+        <div class="grid">
+            
+            <div class="card">
+                <h3><span>🎓</span> Student Batch Import</h3>
+                <p>Required structure columns: <code>register</code>, <code>name</code>, <code>dob</code>.</p>
+                <form action="/upload_students" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" class="input-file-field" accept=".csv, .xlsx, .xls" required>
+                    <button type="submit" class="btn-submit-action">Upload Students Data</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3><span>👔</span> HOD Batch Import</h3>
+                <p>Required structure columns: <code>username</code>, <code>name</code>, <code>password</code>.</p>
+                <form action="/upload_hod" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" class="input-file-field" accept=".csv, .xlsx, .xls" required>
+                    <button type="submit" class="btn-submit-action">Upload HODs Data</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3><span>👩‍🏫</span> Staff Batch Import</h3>
+                <p>Required structure columns: <code>username</code>, <code>name</code>, <code>password</code>.</p>
+                <form action="/upload_staff" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" class="input-file-field" accept=".csv, .xlsx, .xls" required>
+                    <button type="submit" class="btn-submit-action">Upload Staff Data</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3><span>🔑</span> Warden Batch Import</h3>
+                <p>Required structure columns: <code>username</code>, <code>name</code>, <code>password</code>.</p>
+                <form action="/upload_warden" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" class="input-file-field" accept=".csv, .xlsx, .xls" required>
+                    <button type="submit" class="btn-submit-action">Upload Wardens Data</button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

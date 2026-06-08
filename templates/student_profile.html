@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+    background-color: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Header styling */
+.profile-header {
+    text-align: center; 
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    background: #4A90E2;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+}
+
+.profile-header h1 { margin: 0; font-size: 1.8rem; }
+.subtitle { color: #777; margin-top: 5px; }
+
+/* Grid Layout for Cards */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.info-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.full-width { grid-column: span 2; }
+
+h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
+    color: #4A90E2;
+}
+
+/* Row styling */
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #fafafa;
+}
+
+.label {
+    font-weight: 600;
+    color: #666;
+}
+
+.value {
+    color: #111;
+}
+
+/* Action Button */
+.actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.edit-btn {
+    text-decoration: none;
+    background: #4A90E2;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    transition: opacity 0.3s;
+}
+
+.edit-btn:hover { opacity: 0.8; }
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+    .profile-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+}
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+    <!-- Header Section -->
+    <div class="profile-header">
+        <div class="avatar">{{ student.name[0] }}</div>
+        <h1>{{ student.name }}</h1>
+        <p class="subtitle">{{ student.department }} | Year {{ student.year }}</p>
+    </div>
+
+    <div class="profile-grid">
+        <!-- Academic Details -->
+        <div class="info-card">
+            <h3><i class="icon">🎓</i> Academic Details</h3>
+            <div class="detail-item">
+                <span class="label">College:</span>
+                <span class="value">{{ student.college }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Department:</span>
+                <span class="value">{{ student.department }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Year:</span>
+                <span class="value">{{ student.year }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Room No:</span>
+                <span class="value">{{ student.room_no }}</span>
+            </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="info-card">
+            <h3><i class="icon">📞</i> Contact Information</h3>
+            <div class="detail-item">
+                <span class="label">Student No:</span>
+                <span class="value">{{ student.student_no }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Father's No:</span>
+                <span class="value">{{ student.father_no }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Mother's No:</span>
+                <span class="value">{{ student.mother_no }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Guardian No:</span>
+                <span class="value">{{ student.guardient_no }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+
+    <style>
+        /* ==========================================
+   1. VARIABLES & RESET
+   ========================================== */
+        :root {
+            --primary-color: #2563eb;
+            /* Modern blue accent */
+            --primary-hover: #1d4ed8;
+            --bg-main: #f8fafc;
+            /* Soft light grey background */
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            /* High-contrast dark charcoal */
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --border-focus: #3b82f6;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* ==========================================
+   2. NAVIGATION BAR
+   ========================================== */
+        .navbar {
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color);
+            background-color: #eff6ff;
+        }
+
+        /* ==========================================
+   3. MAIN CONTENT & FORM CONTAINER
+   ========================================== */
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .form-container {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 2.5rem;
+            max-width: 800px;
+            /* Clean form container constraints */
+            margin: 0 auto;
+        }
+
+        .form-container h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            color: var(--text-main);
+        }
+
+        /* Accent line under header */
+        .form-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* ==========================================
+   4. FORM ELEMENTS & GRID
+   ========================================== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* Balanced 2-column layout on desktop */
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Spans full grid width where explicitly designated (e.g., Guardian contact) */
+        .input-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        /* Modern focus ring layout */
+        input:focus,
+        select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Remove default spin arrows from number inputs */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* ==========================================
+   5. BUTTONS
+   ========================================== */
+        .submit-btn {
+            display: inline-block;
+            width: 100%;
+            /* Fully responsive width matching form bottom */
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.85rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* ==========================================
+   6. RESPONSIVE DESIGN (MOBILE VIEW)
+   ========================================== */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-menu {
+                gap: 0.5rem;
+            }
+
+            .nav-link {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.6rem;
+            }
+
+            .main-content {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            /* Force all grid tracks to a single elegant column */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .input-group.full-width {
+                grid-column: span 1;
+            }
+
+            .form-container h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                🏫 Portal
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="#" class="nav-link active">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="form-container">
+            <h2>Student Registration</h2>
+            <form action="/add_student" method="POST">
+                <div class="form-grid">
+
+                    <div class="input-group">
+                        <label for="register">Register Number</label>
+                        <input type="text" name="register" id="register" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" name="dob" id="dob" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="department">Department</label>
+                        <select name="department" id="department" required>
+                            <option value="">Select Department</option>
+                            <option value="AI&DS">AI&DS</option>
+                            <option value="AI&ML">AI&ML</option>
+                            <option value="IT">IT</option>
+                            <option value="CSE">CSE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="EEE">EEE</option>
+                            <option value="MECH">MECH</option>
+                            <option value="CY">CY</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="year">Year</label>
+                        <select name="year" id="year" required>
+                            <option value="">Select Year</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="college">College</label>
+                        <select name="college" id="college" required>
+                            <option value="">Select College</option>
+                            <option value="ACET">Adhi College of Engineering and Technology</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="room_no">Room No.</label>
+                        <input type="text" name="room_no" id="room_no" maxlength="5">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="student_no">Student Contact</label>
+                        <input type="number" name="student_no" id="student_no" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="father_no">Father's Contact</label>
+                        <input type="number" name="father_no" id="father_no" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="mother_no">Mother's Contact</label>
+                        <input type="number" name="mother_no" id="mother_no" required>
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="guardient_no">Guardian's Contact</label>
+                        <input type="number" name="guardient_no" id="guardient_no">
+                    </div>
+
+                </div>
+                <button type="submit" class="submit-btn">Register Student</button>
+            </form>
+        </div>
+    </main>
+
+</body>
+
+</html>

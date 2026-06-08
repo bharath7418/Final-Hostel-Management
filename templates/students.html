@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management Portal</title>
+    <style>
+        /* ==========================================
+           1. VARIABLES, RESET & SYSTEM THEME
+           ========================================== */
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --success-hover: #15803d;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* ==========================================
+           2. NAVBAR
+           ========================================== */
+        .navbar {
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        /* ==========================================
+           3. MAIN LAYOUT & HEADER CONTROLS
+           ========================================== */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        /* LIVE COUNT TRACKER */
+        .counter-badge {
+            background-color: #f1f5f9;
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+
+        .counter-badge span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        /* ==========================================
+           4. MULTI-FIELD FILTER SECTION
+           ========================================== */
+        .filter-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .filter-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            outline: none;
+            width: 100%;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Highlight design for unified phone search component */
+        .filter-group.highlight-input input {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+
+        /* ==========================================
+           5. DATA TABLE VIEW (DESKTOP)
+           ========================================== */
+        .table-container {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.925rem;
+        }
+
+        .student-table th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .student-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        .student-table tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            background-color: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .badge-dept {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-icon {
+            padding: 0.4rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background-color: #f1f5f9;
+        }
+
+        .edit-row:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .delete-row:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* ==========================================
+           6. RESPONSIVE DESIGN (MOBILE CARD CONVERSION)
+           ========================================== */
+        @media (max-width: 1024px) {
+
+            .student-table thead {
+                display: none;
+            }
+
+            .student-table,
+            .student-table tbody,
+            .student-table tr,
+            .student-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .student-table tr {
+                background-color: var(--bg-card);
+                margin-bottom: 1.25rem;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-lg);
+                padding: 1rem;
+                box-shadow: var(--shadow-sm);
+            }
+
+            .student-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px dashed var(--border);
+                text-align: right;
+            }
+
+            .student-table td:last-child {
+                border-bottom: none;
+                padding-top: 1rem;
+                justify-content: flex-end;
+                gap: 0.5rem;
+            }
+
+            .student-table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+                color: var(--text-muted);
+                text-align: left;
+                font-size: 0.85rem;
+                padding-right: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-group {
+                width: 100%;
+            }
+
+            .action-group .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🏫 Portal</a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/add_student" class="nav-link">Register</a></li>
+                <li><a href="/students" class="nav-link active">Students</a></li>
+                <li><a href="#" class="nav-link">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h2>Student Directory</h2>
+                <div class="counter-badge">
+                    Showing <span id="count-filtered">0</span> of <span id="count-total">0</span> students
+                </div>
+            </div>
+            <div class="action-group">
+                <a href="/leave_management" class="btn btn-success">
+                    📅 Leave Management
+                </a>
+                <a href="/add_student" class="btn btn-primary">
+                    ➕ Add Student
+                </a>
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <h3>🔍 Multi-Field Search Filter</h3>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Register No.</label>
+                    <input type="text" id="filter-register" placeholder="Search Reg...">
+                </div>
+                <div class="filter-group">
+                    <label>Full Name</label>
+                    <input type="text" id="filter-name" placeholder="Search Name...">
+                </div>
+                <div class="filter-group">
+                    <label>Department</label>
+                    <select id="filter-dept">
+                        <option value="">All Depts</option>
+                        <option value="AI&DS">AI&DS</option>
+                        <option value="AI&ML">AI&ML</option>
+                        <option value="IT">IT</option>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="MECH">MECH</option>
+                        <option value="CY">CY</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Year</label>
+                    <select id="filter-year">
+                        <option value="">All Years</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Room No.</label>
+                    <input type="text" id="filter-room" placeholder="Room...">
+                </div>
+                <div class="filter-group highlight-input">
+                    <label>Search Contacts</label>
+                    <input type="text" id="filter-contacts" placeholder="Search any phone no...">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="student-table" id="studentTable">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Register No</th>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Department</th>
+                        <th>Year</th>
+                        <th>College</th>
+                        <th>Room</th>
+                        <th>Contacts</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr data-id="{{ student.id }}">
+                        <td data-label="S.No" class="cell-index"></td>
+                        <td data-label="Register No" class="cell-register">{{ student.register }}</td>
+                        <td data-label="Name" class="cell-name">{{ student.name }}</td>
+                        <td data-label="DOB">{{ student.dob.split(' ')[0] }}</td>
+                        <td data-label="Department" class="cell-dept">
+                            <span class="badge badge-dept">{{ student.department }}</span>
+                        </td>
+                        <td data-label="Year" class="cell-year">{{ student.year }}</td>
+                        <td data-label="College">{{ student.college }}</td>
+                        <td data-label="Room" class="cell-room">{{ student.room_no if student.room_no else 'N/A' }}</td>
+                        <td data-label="Contacts" class="cell-contacts">
+                            <div class="phone-string" style="display: none;">S:{{ student.student_no if
+                                student.student_no else '' }} F:{{ student.father_no if student.father_no else '' }}
+                                M:{{ student.mother_no if student.mother_no else '' }} G:{{ student.guardient_no if
+                                student.guardient_no else '' }}</div>
+
+                            <div>S: {{ student.student_no if student.student_no else 'N/A' }}</div>
+                            <div>F: {{ student.father_no if student.father_no else 'N/A' }}</div>
+                            {% if student.mother_no %}
+                            <div>M: {{ student.mother_no }}</div>
+                            {% endif %}
+                            {% if student.guardient_no %}
+                            <div>G: {{ student.guardient_no }}</div>
+                            {% endif %}
+                        </td>
+
+                        <td data-label="Actions">
+                            <a href="{{ url_for('delete_student', id=student.id) }}" class="btn-icon delete-row"
+                                title="Delete Student"
+                                onclick="return confirm('Are you absolutely sure? This cannot be undone......');">
+                                🗑️
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr id="empty-state-row">
+                        <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            No student records found matching the query database.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const table = document.getElementById('studentTable');
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const rows = tbody.getElementsByTagName('tr');
+
+        const countTotalEl = document.getElementById('count-total');
+        const countFilteredEl = document.getElementById('count-filtered');
+
+        const filters = {
+            register: document.getElementById('filter-register'),
+            name: document.getElementById('filter-name'),
+            dept: document.getElementById('filter-dept'),
+            year: document.getElementById('filter-year'),
+            room: document.getElementById('filter-room'),
+            contacts: document.getElementById('filter-contacts')
+        };
+
+        function updateTableMetrics() {
+            let visibleIndex = 1;
+            let totalStudents = 0;
+            let filteredCount = 0;
+
+            for (let row of rows) {
+                if (row.id === 'empty-state-row' || !row.querySelector('.cell-register')) continue;
+                totalStudents++;
+
+                if (row.style.display !== "none") {
+                    row.querySelector('.cell-index').textContent = visibleIndex++;
+                    filteredCount++;
+                }
+            }
+
+            countTotalEl.textContent = totalStudents;
+            countFilteredEl.textContent = filteredCount;
+        }
+
+        function filterTable() {
+            const valReg = filters.register.value.toLowerCase();
+            const valName = filters.name.value.toLowerCase();
+            const valDept = filters.dept.value.toLowerCase();
+            const valYear = filters.year.value.toLowerCase();
+            const valRoom = filters.room.value.toLowerCase();
+            const valContactStr = filters.contacts.value.replace(/\s+/g, '').toLowerCase();
+
+            for (let row of rows) {
+                if (row.id === 'empty-state-row' || !row.querySelector('.cell-register')) continue;
+
+                const textReg = row.querySelector('.cell-register').textContent.toLowerCase();
+                const textName = row.querySelector('.cell-name').textContent.toLowerCase();
+                const textDept = row.querySelector('.cell-dept').textContent.toLowerCase();
+                const textYear = row.querySelector('.cell-year').textContent.toLowerCase();
+                const textRoom = row.querySelector('.cell-room').textContent.toLowerCase();
+
+                // Securely targets the hidden un-commented .phone-string wrapper node
+                const phoneStringEl = row.querySelector('.phone-string');
+                const textContacts = phoneStringEl ? phoneStringEl.textContent.toLowerCase() : '';
+
+                const matches =
+                    textReg.includes(valReg) &&
+                    textName.includes(valName) &&
+                    textDept.includes(valDept) &&
+                    textYear.includes(valYear) &&
+                    textRoom.includes(valRoom) &&
+                    textContacts.includes(valContactStr);
+
+                row.style.display = matches ? "" : "none";
+            }
+
+            updateTableMetrics();
+        }
+
+        Object.values(filters).forEach(element => {
+            element.addEventListener('input', filterTable);
+            element.addEventListener('change', filterTable);
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const studentRows = Array.from(rows).filter(row => row.querySelector('.cell-register'));
+
+            studentRows.sort((rowA, rowB) => {
+                const regA = rowA.querySelector('.cell-register').textContent.trim();
+                const regB = rowB.querySelector('.cell-register').textContent.trim();
+                return regA.localeCompare(regB, undefined, { numeric: true, sensitivity: 'base' });
+            });
+
+            studentRows.forEach(row => tbody.appendChild(row));
+            updateTableMetrics();
+        });
+
+    </script>
+</body>
+
+</html>

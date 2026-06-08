@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Dashboard | {{ hod.name }}</title>
+    <style>
+        :root {
+            --primary-dark: #1e293b;
+            --accent-blue: #3b82f6;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --bg-light: #f1f5f9;
+            --text-main: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        /* ==========================================================================
+           1. Header & Navigation Group
+           ========================================================================== */
+        .dashboard-header {
+            background: var(--primary-dark);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-group a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-group a:hover {
+            color: white;
+        }
+
+        .logout-btn {
+            background: var(--danger-red);
+            padding: 6px 15px;
+            border-radius: 6px;
+            color: white !important;
+        }
+
+        /* ==========================================================================
+           2. Dashboard Containers & Layout Frameworks
+           ========================================================================== */
+        .content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* ==========================================================================
+           3. Request Ticket Display Cards
+           ========================================================================== */
+        .letter-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .category-badge {
+            background: #dbeafe;
+            color: var(--accent-blue);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pill {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .student-info {
+            margin-bottom: 1rem;
+        }
+
+        .student-info h3 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .student-info p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .letter-body {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #cbd5e1;
+            line-height: 1.4;
+        }
+
+        /* ==========================================================================
+           4. Parent Contact Segment Sub-Block
+           ========================================================================== */
+        .meta-info {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .meta-info p:first-of-type {
+            color: #111827;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        .contact-action-container {
+            display: block;
+            margin: 0;
+        }
+
+        .phone-call-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0fdf4;
+            border: 1px solid #dcfce7;
+            padding: 8px 14px;
+            border-radius: 6px;
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .phone-call-btn:hover {
+            background-color: #16a34a;
+            color: #ffffff;
+            border-color: #16a34a;
+            box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .phone-call-btn:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .phone-icon {
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        .meta-info p:last-of-type {
+            font-size: 0.82rem;
+            color: #4b5563;
+            line-height: 1.4;
+            margin: 0;
+            border-top: 1px dashed #f3f4f6;
+            padding-top: 10px;
+        }
+
+        .meta-info p:last-of-type strong {
+            color: #374151;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        /* ==========================================================================
+           5. Card Processing Interactive Buttons & Forms
+           ========================================================================== */
+        .card-footer {
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        /* Forward Selection Styling Form Control Section */
+        .approval-form {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .approval-form select {
+            flex-grow: 1;
+            padding: 7px 10px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-main);
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.15s ease-in-out;
+            max-width: 160px;
+        }
+
+        .approval-form select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .approve {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .reject {
+            background: #fee2e2;
+            color: var(--danger-red);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 600px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .nav-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .letter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .approval-form {
+                width: 100%;
+            }
+
+            .approval-form select {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div class="profile-info">
+            <h1>Welcome, {{ hod.name }}</h1>
+            <small style="color: #94a3b8;">User: {{ hod.username }} • Official HOD</small>
+        </div>
+
+        <nav class="nav-group">
+            <a href="/hod_page/approval_letters/{{ hod.id }}">Approved Log</a>
+            <a href="/hod_page/hod_rejected_letters/{{ hod.id }}">Rejected Log</a>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <main class="content">
+            <h2>Incoming Student Requests</h2>
+
+            <div class="letter-grid">
+                {% for l in letters %}
+                {% if l.student_department == hod.department and l.status == 'Pending HOD' %}
+                <div class="letter-card">
+
+                    <div class="card-header">
+                        <span class="category-badge">{{ l.id }}</span>
+                        <small style="color: #94a3b8; display: block; margin-right: 4px;">{{
+                            l.created_at.strftime('%Y-%m-%d') }}</small>
+
+                    </div>
+
+                    <div class="student-info">
+                        <h3>{{ l.student_name }}</h3>
+                        <p>{{ l.student_department }} | Year {{ l.student_year }}</p>
+                    </div>
+
+                    <div class="letter-body">
+                        <p class="content-text">"{{ l.letter_content }}"</p>
+                    </div>
+
+                    <div class="meta-info">
+                        <p>{{ l.parent_name }}</p>
+                        <div class="contact-action-container">
+                            <a href="tel:{{ l.parent_no }}" class="phone-call-btn" title="Click to Call">
+                                <span class="phone-icon">📞</span>
+                                <span class="phone-number-text">{{ l.parent_no }}</span>
+                            </a>
+                        </div>
+                        <p>
+                            <strong>Parent Available Time:</strong><br>
+                            {{ l.parent_start_time.strftime('%d %b, %I:%M %p') }} - {{ l.parent_end_time.strftime('%d
+                            %b, %I:%M %p') }}
+                        </p>
+                    </div>
+
+                    <div class="card-footer">
+
+                        <div class="action-buttons">
+                            <form action="{{ url_for('hod_approval_letter', id=l.id) }}" method="POST"
+                                class="approval-form">
+                                <select required name="nameSelection" id="nameSelection">
+                                    <option value="">Choose Options...</option>
+                                    <option value="Dr. D.PALANISAMY">Dr. D.PALANISAMY</option>
+                                    {% for w in warden %}
+                                    <option value="{{ w.name }}">{{ w.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn approve">Approve</button>
+                            </form>
+
+                            <a class="btn reject" href="{{ url_for('hod_reject_letter', id=l.id) }}"
+                                onclick="return confirm('Reject this request?');">Reject</a>
+                        </div>
+                    </div>
+
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

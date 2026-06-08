@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Student Request</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            /* Serifs give an official/formal feel */
+        }
+
+        /* Use sans-serif for inputs, buttons, and navigation for clean readability */
+        input,
+        select,
+        textarea,
+        button,
+        .navbar,
+        label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #0f172a;
+            /* Deep elegant slate */
+            --primary-hover: #1e293b;
+            --accent-color: #0284c7;
+            /* Professional blue accent */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --text-dark: #0f172a;
+            --border-color: #cbd5e1;
+            --border-focus: #38bdf8;
+            --max-width: 1200px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 65px;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #ffffff;
+        }
+
+        /* --- Main Content Wrapper --- */
+        .main-content {
+            max-width: var(--max-width);
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* --- Official Letter Container --- */
+        .letter-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            padding: 3rem;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px double var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .letter-header h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .letter-header p {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.95rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* --- Grids & Layouts --- */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Form elements */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        /* Focus & Interactive States */
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+            background-color: #ffffff;
+        }
+
+        /* Read-only fields styling */
+        .input-group input[readonly] {
+            background-color: #f1f5f9;
+            color: #64748b;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+
+        /* Horizontal Divider */
+        .divider {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* --- Letter Body & Textarea --- */
+        .letter-body {
+            margin-bottom: 2rem;
+        }
+
+        .letter-body p {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            font-weight: bold;
+        }
+
+        .letter-body textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 1rem;
+            resize: vertical;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            background-color: #ffffff;
+            border-style: dashed;
+            /* Aesthetic formal letter draft look */
+        }
+
+        /* --- Time & Parent Section Container --- */
+        .time-section {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* --- Letter Signatures / Footer --- */
+        .letter-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+        }
+
+        .student-sign {
+            text-align: right;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .student-sign p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Action Button --- */
+        .send-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
+        }
+
+        .send-btn:hover {
+            background-color: #0270a5;
+        }
+
+        .send-btn:active {
+            transform: scale(0.99);
+        }
+
+        /* --- Responsive Styles (Mobile Viewports) --- */
+        @media (max-width: 768px) {
+            .letter-container {
+                padding: 1.75rem;
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+                /* Stack into single column */
+                gap: 0.75rem;
+            }
+
+            .letter-header h2 {
+                font-size: 1.6rem;
+            }
+
+            .letter-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .student-sign {
+                text-align: left;
+                width: 100%;
+                border-top: 1px solid var(--border-color);
+                padding-top: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            /* Mobile navigation layout adjustments */
+            .nav-container {
+                flex-direction: column;
+                justify-content: center;
+                height: auto;
+                padding: 1rem 0;
+                gap: 0.75rem;
+            }
+
+            .nav-menu {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            .nav-link {
+                font-size: 0.85rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .letter-container {
+                padding: 1.25rem;
+            }
+
+            .time-section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">🏛️ StudentPortal</a>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link">Dashboard</a></li>
+                <li><a href="#" class="nav-link active">New Request</a></li>
+                <li><a href="#" class="nav-link">History</a></li>
+                <li><a href="#" class="nav-link">Support</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="letter-container">
+            <div class="letter-header">
+                <h2>Official Request Form</h2>
+                <p>Academic Year 2026</p>
+            </div>
+
+            <form action="/submit_request" method="POST">
+
+                <div class="meta-grid">
+                    <div class="input-group">
+                        <label>Student Name</label>
+                        <input type="text" value="{{ student.name }}" name="student_name" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Department</label>
+                        <input type="text" value="{{ student.department }}" name="department" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Year of Study</label>
+                        <input type="text" value="{{ student.year }}" name="year" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Institution</label>
+                        <input type="text" value="{{ student.college }}" name="college" readonly>
+                    </div>
+                </div>
+
+                <div class="meta-grid">
+                    <div class="input-group">
+                        <label>Addressed To</label>
+
+                        <div class="form-group">
+                            <label for="category">Select Category:</label>
+                            <select name="category" id="category" onchange="updateNames()">
+                                <option value="">-- Choose Category --</option>
+                                <option value="staff">Staff</option>
+                                <option value="warden">Warden</option>
+                                <option value="HOD">HOD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nameSelection">Select Name:</label>
+                            <select name="nameSelection" id="nameSelection" disabled>
+                                <option value="">-- Select category first --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Date of Submission</label>
+                        <input type="text" name="request_date" value="{{ today }}" readonly>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Request Category</label>
+                    <select name="request_category" id="catagory" required>
+                        <option value="home_permission">Home Permission</option>
+                        <option value="event_permission">Event Permission</option>
+                    </select>
+                </div>
+
+                <hr class="divider">
+
+                <div class="letter-body">
+                    <p>Respected Sir/Madam,</p>
+                    <textarea name="letter_content" placeholder="State your reason for request clearly..."
+                        required></textarea>
+                </div>
+
+                <div class="time-section">
+                    <div class="input-group">
+                        <label>Parent/Guardian Name</label>
+                        <input type="text" name="parent_name" placeholder="Enter Parent Name" required>
+                    </div>
+                    <div class="meta-grid">
+                        <div class="input-group">
+                            <label>Parent Number</label>
+                            <select name="parent_no">
+                                <option value="{{ student.father_no }}">{{ student.father_no }}</option>
+                                <option value="{{ student.mother_no }}">{{ student.mother_no }}</option>
+                                <option value="{{ student.guardient_no }}">{{ student.guardient_no }}</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Availability Start Time</label>
+                            <input type="datetime-local" name="parent_start_time" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Availability End Time</label>
+                            <input type="datetime-local" name="parent_end_time" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="letter-footer">
+                    <div></div>
+                    <div class="student-sign">
+                        <p>Sincerely,</p>
+                        <strong>{{ student.name }}</strong><br>
+                        Room: {{ student.room_no }} <br>
+                    </div>
+                </div>
+
+                <button type="submit" class="send-btn">Submit Official Request</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Bridge Flask data to JavaScript
+        const dbData = {{ data | tojson }};
+
+        function updateNames() {
+            const categorySelect = document.getElementById("category");
+            const nameSelect = document.getElementById("nameSelection");
+            const selectedCategory = categorySelect.value;
+
+            // Get names for the category, or an empty array if none found
+            const names = dbData[selectedCategory] || [];
+
+            // Reset the names dropdown
+            nameSelect.innerHTML = '<option value="">-- Select Name --</option>';
+
+            if (selectedCategory && names.length > 0) {
+                nameSelect.disabled = false;
+
+                names.forEach(name => {
+                    let option = document.createElement("option");
+                    option.value = name;
+                    option.textContent = name;
+                    nameSelect.appendChild(option);
+                });
+            } else if (selectedCategory && names.length === 0) {
+                nameSelect.disabled = true;
+                nameSelect.innerHTML = '<option value="">No records in database</option>';
+            } else {
+                nameSelect.disabled = true;
+                nameSelect.innerHTML = '<option value="">-- Select category first --</option>';
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>

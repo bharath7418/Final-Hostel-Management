@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warden Dashboard | Intelligent Logs</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 20px; }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Header Area */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logout-btn { color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.85rem; padding: 8px 16px; border-radius: 8px; border: 1px solid #fee2e2; transition: 0.2s; }
+        .logout-btn:hover { background: #fef2f2; }
+
+        /* Filter Panel */
+        .filter-panel {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+        .filter-group input, .filter-group select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        .filter-group input:focus { border-color: var(--accent); }
+
+        /* Table Area */
+        .table-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafc; }
+        th { padding: 15px; text-align: left; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+
+        /* Table-to-Card Responsive Logic */
+        @media (max-width: 850px) {
+            thead { display: none; }
+            tr { display: block; border-bottom: 5px solid var(--bg); padding: 10px; }
+            td { display: block; width: 100%; border: none; padding: 5px 10px; }
+            td::before { content: attr(data-label); font-weight: 700; font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; }
+        }
+
+        .status-pill { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .hidden-row { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>Approval Records</h1>
+            <p style="color: var(--text-muted);">Warden Access: {{ warden.name }}</p>
+        </div>
+        <a href="/logout" class="logout-btn">Logout System</a>
+    </div>
+
+    <!-- 🔍 Smart Filter Panel -->
+    <div class="filter-panel">
+        <div class="filter-group">
+            <label>Search Student</label>
+            <input type="text" id="nameFilter" placeholder="Enter name or ID..." onkeyup="applyFilters()">
+        </div>
+        <div class="filter-group">
+            <label>Category (Dept)</label>
+            <select id="deptFilter" onchange="applyFilters()">
+                <option value="all">All Departments</option>
+                <!-- These would dynamically populate from your data -->
+                <option value="AI & DS">AI & DS</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Filter by Date</label>
+            <input type="date" id="dateFilter" onchange="applyFilters()">
+        </div>
+        <button onclick="resetFilters()" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; background: #fff;">Clear</button>
+    </div>
+
+    <!-- 📊 Table View -->
+    <div class="table-card">
+        <table id="logsTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Student Info</th>
+                    <th>Department</th>
+                    <th>Guardian Details</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for l in letters %}
+                {% if l.warden_name == warden.name and l.status == 'Approval' %}
+                <tr class="log-row" 
+                    data-name="{{ l.student_name|lower }}" 
+                    data-dept="{{ l.student_department }}" 
+                    data-date="{{ l.created_at.strftime('%Y-%m-%d') }}">
+                    
+                    <td data-label="Date">
+                        <strong>{{ l.created_at.strftime('%d-%m-%Y') }}</strong><br>
+                        <small>{{ l.created_at.strftime('%A') }}</small>
+                    </td>
+                    <td data-label="Student">
+                        <div style="font-weight: 700;">{{ l.student_name }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Year: {{ l.student_year }}</div>
+                    </td>
+                    <td data-label="Category">{{ l.student_department }}</td>
+                    <td data-label="Guardian">
+                        {{ l.parent_name }}<br>
+                        <small style="color: var(--accent);">{{ l.parent_no }}</small>
+                    </td>
+                    <td data-label="Status">
+                        <span class="status-pill">APPROVED</span>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function applyFilters() {
+        const nameVal = document.getElementById('nameFilter').value.toLowerCase();
+        const deptVal = document.getElementById('deptFilter').value;
+        const dateVal = document.getElementById('dateFilter').value;
+        const rows = document.querySelectorAll('.log-row');
+
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const dept = row.getAttribute('data-dept');
+            const date = row.getAttribute('data-date');
+
+            const nameMatch = name.includes(nameVal);
+            const deptMatch = (deptVal === 'all' || dept === deptVal);
+            const dateMatch = (dateVal === '' || date === dateVal);
+
+            if (nameMatch && deptMatch && dateMatch) {
+                row.classList.remove('hidden-row');
+            } else {
+                row.classList.add('hidden-row');
+            }
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById('nameFilter').value = '';
+        document.getElementById('deptFilter').value = 'all';
+        document.getElementById('dateFilter').value = '';
+        applyFilters();
+    }
+</script>
+
+</body>
+</html>
