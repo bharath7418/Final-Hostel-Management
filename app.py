@@ -1,26 +1,15 @@
-from flask import Flask, render_template, redirect, session, request,url_for, flash, abort, Response, jsonify
+from flask import Flask, render_template, redirect, request,url_for, flash, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_manager,  login_user, login_required, current_user, UserMixin, logout_user
-from dotenv import load_dotenv
 import os, json
 from datetime import date, datetime
 import qrcode
 import io
 import base64
 import pandas as pd
-import numpy as np
 import re
 from zoneinfo import ZoneInfo
 
-# Optional OpenCV support: use headless OpenCV in cloud environments.
-try:
-    import cv2
-except ImportError:
-    cv2 = None
-except Exception:
-    cv2 = None
-
-load_dotenv()
 
 # Fetch the exact time specifically for India
 local_time = datetime.now(ZoneInfo("Asia/Kolkata"))
