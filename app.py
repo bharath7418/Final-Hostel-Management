@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, request,url_for, flash, abor
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_manager,  login_user, login_required, current_user, UserMixin, logout_user
 import os, json
+from flask_migrate import Migrate
 from datetime import date, datetime
 import qrcode
 import io
@@ -34,7 +35,6 @@ login_manager.login_view = 'home'
 
 
 #Migrate Procedure
-from flask_migrate import Migrate
 migrate = Migrate(app, db)
 
 # Stack Holder Details 
