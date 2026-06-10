@@ -1091,44 +1091,56 @@ def upload_warden():
             
     return render_template('warden_bulk_import.html')
 
-if __name__ == '__main__' :
-     
-    with app.app_context():
-        db.create_all()
-        if not User.query.filter_by(username='user').first():
-            db.session.add(User(username='user', password='user123'))
-            db.session.commit()
-        # Added .first() to actually fetch a record or None
-        if not Student.query.filter_by(register='410123243006').first():
-            db.session.add(Student(
-                register='410123243006', 
-                dob="2006-01-19", 
-                name='Bharath',
-                department="AI&DS",
-                year='4',
-                college='ACET',
-                room_no='AD214',
-                student_no='7418771913',
-                father_no='9364290146',
-                mother_no='9092051423',
-                guardient_no='9710210537'
-            ))
-            db.session.commit()
-        if not Warden.query.filter_by(username='suresh').first() :
-            db.session.add(Warden(username='suresh', password='suresh123',name='Mr.Suresh'))
-            db.session.commit()
-        if not Security.query.filter_by(username='security').first() :
-            db.session.add(Security(username='security', password='security123',name='SecurityName'))
-            db.session.commit()
-        if not Staff.query.filter_by(username='asha').first() :
-            db.session.add(Staff(username='asha', password='asha123',name='Ms.Asha Marry',department='AI&DS'))
-            db.session.commit()
-        if not HOD.query.filter_by(username='hod_aids').first() :
-            db.session.add(HOD(username='hod_aids', password='aids',name='Dr. V.BELMER GLADSON',department='AI&DS'))
-            db.session.commit()
-        if not Admin.query.filter_by(username='Adhi').first() :
-            db.session.add(Admin(username='Adhi', password='Adhi123',name='Adhi Admin'))
-            db.session.commit()
-   
-    app.run(debug=True)
+# ==========================================
+# Initialize Database & Default Data
+# (Runs on Vercel boot up!)
+# ==========================================
+with app.app_context():
+    db.create_all()
+    
+    # Seed default Admin/Users if they don't exist
+    if not User.query.filter_by(username='user').first():
+        db.session.add(User(username='user', password='user123'))
+        db.session.commit()
+        
+    if not Student.query.filter_by(register='410123243006').first():
+        db.session.add(Student(
+            register='410123243006', 
+            dob="2006-01-19", 
+            name='Bharath',
+            department="AI&DS",
+            year='4',
+            college='ACET',
+            room_no='AD214',
+            student_no='7418771913',
+            father_no='9364290146',
+            mother_no='9092051423',
+            guardient_no='9710210537'
+        ))
+        db.session.commit()
+        
+    if not Warden.query.filter_by(username='suresh').first() :
+        db.session.add(Warden(username='suresh', password='suresh123',name='Mr.Suresh'))
+        db.session.commit()
+        
+    if not Security.query.filter_by(username='security').first() :
+        db.session.add(Security(username='security', password='security123',name='SecurityName'))
+        db.session.commit()
+        
+    if not Staff.query.filter_by(username='asha').first() :
+        db.session.add(Staff(username='asha', password='asha123',name='Ms.Asha Marry',department='AI&DS'))
+        db.session.commit()
+        
+    if not HOD.query.filter_by(username='hod_aids').first() :
+        db.session.add(HOD(username='hod_aids', password='aids',name='Dr. V.BELMER GLADSON',department='AI&DS'))
+        db.session.commit()
+        
+    if not Admin.query.filter_by(username='Adhi').first() :
+        db.session.add(Admin(username='Adhi', password='Adhi123',name='Adhi Admin'))
+        db.session.commit()
 
+# ==========================================
+# Run Local Server
+# ==========================================
+if __name__ == '__main__':
+    app.run(debug=True)
