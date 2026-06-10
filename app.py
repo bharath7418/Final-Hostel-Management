@@ -12,7 +12,6 @@ import re
 from zoneinfo import ZoneInfo
 
 
-# Fetch the exact time specifically for India
 local_time = datetime.now(ZoneInfo("Asia/Kolkata"))
 
 app  = Flask(__name__)
